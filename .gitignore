@@ -1,0 +1,8 @@
+# Ignore VS Code settings folder
+.vscode/
+
+# Ignore compiled executable
+main.exe
+
+# Ignore data file
+articles.txt
