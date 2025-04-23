@@ -1,10 +1,10 @@
-Article 1: NASA new planet discovery
+Article 1: UR-CST News
 ========================
-Content: NASA has discovered new planet.
+Content: 50 Students has graduated last year.
 ------------------------
-Source: www.nasa.com
-Date: Wed Apr 23 19:19:43 2025
-Keywords: nasa, discovery
+Source: www.ur.ac.rw
+Date: Wed Apr 23 19:56:44 2025
+Keywords: students, ur, urNews
 ========================
 
 Total Articles: 1
