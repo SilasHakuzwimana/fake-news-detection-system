@@ -223,7 +223,7 @@ public:
         NewsArticle article(nextId++, title, content, source, keywords);
         root = insertHelper(root, article);
         saveToFile();
-        cout << "Article added with ID: " << article.id << endl;
+        cout << "Article with ID: " << article.id <<" added successfully!"<<endl;
     }
 
     NewsArticle *searchById(int id) const
@@ -319,7 +319,7 @@ public:
         }
         else
         {
-            cout << "\nMatching articles found:\n";
+            cout << "\nMatching/Verified articles found:\n";
             for (const auto &article : matches)
             {
                 article.display();
@@ -429,7 +429,7 @@ int main()
             if (article)
                 article->display();
             else
-                cout << "Article not found.\n";
+                cout << "Article with ID: "<< id << " not found.\n";
             break;
         }
         case 3:
@@ -439,7 +439,7 @@ int main()
             cin >> keyword;
             vector<NewsArticle> results = newsDB.searchByKeyword(keyword);
             if (results.empty())
-                cout << "No articles found.\n";
+                cout << "No articles found with this keyword: "<< keyword<< ".\n";
             else
                 for (auto &a : results)
                     a.display();
