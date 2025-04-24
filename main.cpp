@@ -391,7 +391,7 @@ void displayMenu()
     cout << "||  1. Add Verified Article            ||\n";
     cout << "||  2. Search Article by ID            ||\n";
     cout << "||  3. Search Articles by Keyword      ||\n";
-    cout << "||  4. Fact-Check a Claim              ||\n";
+    cout << "||  4. Fact-Check a Claim by keyword   ||\n";
     cout << "||  5. Display All Articles            ||\n";
     cout << "||  6. Update Article                  ||\n";
     cout << "||  7. Delete Article                  ||\n";
