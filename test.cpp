@@ -9,7 +9,6 @@
 
 using namespace std;
 
-// Structure to store details of a news article
 struct NewsArticle
 {
     int id;
@@ -19,20 +18,17 @@ struct NewsArticle
     string date;
     vector<string> keywords;
 
-    // Default constructor
     NewsArticle() {}
 
-    // Constructor to initialize article details
     NewsArticle(int _id, const string &_title, const string &_content,
                 const string &_source, const vector<string> &_keywords)
         : id(_id), title(_title), content(_content), source(_source), keywords(_keywords)
     {
         time_t now = time(0);
-        date = ctime(&now);     // Capture current time
-        date.pop_back();        // Remove newline from date string
+        date = ctime(&now);
+        date.pop_back();
     }
 
-    // Display full article information
     void display() const
     {
         cout << "\nID: " << id << "\nTitle: " << title << "\nContent: " << content
@@ -44,12 +40,11 @@ struct NewsArticle
         cout << "\n";
     }
 
-    // Display article in a formatted view (used in list display)
     void displayFormatted(int index) const
     {
         cout << "Article " << index << ": " << title << "\n";
         cout << "===============================\n";
-        cout << "Content: "<< content << "\n";
+        cout << "Content: " << content << "\n";
         cout << "-------------------------------\n";
         cout << "Source: " << source << "\n";
         cout << "Date: " << date << "\n";
@@ -63,7 +58,6 @@ struct NewsArticle
         cout << "\n=============================\n\n";
     }
 
-    // Convert article to a serializable string (for saving to file)
     string serialize() const
     {
         stringstream ss;
@@ -77,7 +71,6 @@ struct NewsArticle
         return ss.str();
     }
 
-    // Deserialize string to create an article object
     static NewsArticle deserialize(const string &line)
     {
         stringstream ss(line);
@@ -85,7 +78,7 @@ struct NewsArticle
         NewsArticle article;
         getline(ss, token, '|');
         article.id = stoi(token);
-        ss.ignore(1); // skip second '|'
+        ss.ignore(1);
         getline(ss, article.title, '|');
         ss.ignore(1);
         getline(ss, article.content, '|');
@@ -105,7 +98,6 @@ struct NewsArticle
     }
 };
 
-// BST node structure
 struct BSTNode
 {
     NewsArticle article;
@@ -115,14 +107,12 @@ struct BSTNode
     BSTNode(const NewsArticle &a) : article(a), left(nullptr), right(nullptr) {}
 };
 
-// Function to read and clean comma-separated keywords
 vector<string> getKeywords()
 {
     vector<string> keywords;
     string input;
     cout << "Enter keywords (comma separated): ";
-    cin.ignore();
-    getline(cin, input);
+    getline(cin >> ws, input);
     stringstream ss(input);
     string kw;
     while (getline(ss, kw, ','))
@@ -134,14 +124,12 @@ vector<string> getKeywords()
     return keywords;
 }
 
-// Main class to manage the BST of news articles
 class NewsBST
 {
 private:
     BSTNode *root;
     int nextId;
 
-    // Recursive insertion helper
     BSTNode *insertHelper(BSTNode *node, const NewsArticle &article)
     {
         if (!node)
@@ -153,7 +141,6 @@ private:
         return node;
     }
 
-    // Recursive search by ID
     BSTNode *searchByIdHelper(BSTNode *node, int id) const
     {
         if (!node || node->article.id == id)
@@ -161,19 +148,19 @@ private:
         return id < node->article.id ? searchByIdHelper(node->left, id) : searchByIdHelper(node->right, id);
     }
 
-    // Recursive in-order traversal
     void inOrderHelper(BSTNode *node, vector<NewsArticle> &result) const
     {
-        if (!node) return;
+        if (!node)
+            return;
         inOrderHelper(node->left, result);
         result.push_back(node->article);
         inOrderHelper(node->right, result);
     }
 
-    // Search for articles by keyword
     void searchByKeywordHelper(BSTNode *node, const string &keyword, vector<NewsArticle> &results) const
     {
-        if (!node) return;
+        if (!node)
+            return;
         searchByKeywordHelper(node->left, keyword, results);
         if (node->article.title.find(keyword) != string::npos ||
             find(node->article.keywords.begin(), node->article.keywords.end(), keyword) != node->article.keywords.end())
@@ -183,10 +170,10 @@ private:
         searchByKeywordHelper(node->right, keyword, results);
     }
 
-    // Helper to delete a node by ID
     BSTNode *deleteNodeHelper(BSTNode *node, int id)
     {
-        if (!node) return node;
+        if (!node)
+            return node;
         if (id < node->article.id)
             node->left = deleteNodeHelper(node->left, id);
         else if (id > node->article.id)
@@ -212,7 +199,6 @@ private:
         return node;
     }
 
-    // Find the node with the minimum value (used in deletion)
     BSTNode *minValueNode(BSTNode *node)
     {
         BSTNode *current = node;
@@ -224,31 +210,28 @@ private:
 public:
     NewsBST() : root(nullptr), nextId(1)
     {
-        loadFromFile();  // Load saved articles at startup
+        loadFromFile();
     }
 
     ~NewsBST()
     {
-        saveToFile();    // Save all articles before exit
+        saveToFile();
     }
 
-    // Add new article
     void addArticle(const string &title, const string &content, const string &source, const vector<string> &keywords)
     {
         NewsArticle article(nextId++, title, content, source, keywords);
         root = insertHelper(root, article);
         saveToFile();
-        cout << "Article with ID: " << article.id <<" added successfully!"<<endl;
+        cout << "Article added with ID: " << article.id << endl;
     }
 
-    // Search article by ID
     NewsArticle *searchById(int id) const
     {
         BSTNode *node = searchByIdHelper(root, id);
         return node ? &node->article : nullptr;
     }
 
-    // Search articles by keyword
     vector<NewsArticle> searchByKeyword(const string &keyword) const
     {
         vector<NewsArticle> results;
@@ -256,7 +239,6 @@ public:
         return results;
     }
 
-    // Get all articles (in-order traversal)
     vector<NewsArticle> getAllArticles() const
     {
         vector<NewsArticle> articles;
@@ -264,42 +246,45 @@ public:
         return articles;
     }
 
-    // Update article by ID
     bool updateArticle(int id)
     {
-        NewsArticle* article = searchById(id);
+        NewsArticle *article = searchById(id);
         if (!article)
             return false;
-    
+
         string title, content, source;
         vector<string> keywords;
-    
+
         cin.ignore();
         cout << "Enter new title (or leave blank to keep current): ";
         getline(cin, title);
-        if (!title.empty()) article->title = title;
-    
+        if (!title.empty())
+            article->title = title;
+
         cout << "Enter new content (or leave blank to keep current): ";
         getline(cin, content);
-        if (!content.empty()) article->content = content;
-    
+        if (!content.empty())
+            article->content = content;
+
         cout << "Enter new source (or leave blank to keep current): ";
         getline(cin, source);
-        if (!source.empty()) article->source = source;
-    
+        if (!source.empty())
+            article->source = source;
+
         cout << "Do you want to update keywords? (y/n): ";
         char ch;
         cin >> ch;
-        if (ch == 'y' || ch == 'Y') {
+        cin.ignore();
+        if (ch == 'y' || ch == 'Y')
+        {
             keywords = getKeywords();
             article->keywords = keywords;
         }
-    
-        saveToFile(); 
+
+        saveToFile();
         return true;
     }
 
-    // Delete article by ID
     bool deleteArticle(int id)
     {
         if (!searchById(id))
@@ -309,7 +294,6 @@ public:
         return true;
     }
 
-    // Fact-checking logic using keywords
     void factCheck(const string &claim)
     {
         vector<string> keywords;
@@ -328,11 +312,10 @@ public:
             matches.insert(matches.end(), res.begin(), res.end());
         }
 
-        // Remove duplicates
         sort(matches.begin(), matches.end(), [](const NewsArticle &a, const NewsArticle &b)
              { return a.id < b.id; });
         matches.erase(unique(matches.begin(), matches.end(), [](const NewsArticle &a, const NewsArticle &b)
-                             { return a.id == b.id; }),
+                              { return a.id == b.id; }),
                       matches.end());
 
         if (matches.empty())
@@ -341,7 +324,7 @@ public:
         }
         else
         {
-            cout << "\nMatching/Verified articles found:\n";
+            cout << "\nMatching articles found:\n";
             for (const auto &article : matches)
             {
                 article.display();
@@ -350,22 +333,19 @@ public:
         }
     }
 
-    // Save all articles to a file
     void saveToFile()
     {
-        ofstream out("articles.txt");
+        ofstream out("articles_data.txt");
         vector<NewsArticle> all = getAllArticles();
-        int count = 1;
         for (const auto &article : all)
         {
             out << article.serialize() << "\n";
         }
     }
 
-    // Load articles from a file
     void loadFromFile()
     {
-        ifstream in("articles.txt");
+        ifstream in("articles_data.txt");
         string line;
         int maxId = 0;
         while (getline(in, line))
@@ -381,7 +361,6 @@ public:
     }
 };
 
-// Display user menu
 void displayMenu()
 {
     cout << "\n";
@@ -440,7 +419,7 @@ int main()
             if (article)
                 article->display();
             else
-                cout << "Article with ID: "<< id << " not found.\n";
+                cout << "Article not found.\n";
             break;
         }
         case 3:
@@ -450,7 +429,7 @@ int main()
             cin >> keyword;
             vector<NewsArticle> results = newsDB.searchByKeyword(keyword);
             if (results.empty())
-                cout << "No articles found with this keyword: "<< keyword<< ".\n";
+                cout << "No articles found.\n";
             else
                 for (auto &a : results)
                     a.display();
@@ -477,16 +456,16 @@ int main()
                     a.displayFormatted(i++);
             }
             break;
-        } 
+        }
         case 6:
         {
             int id;
             cout << "Enter ID to update: ";
             cin >> id;
             if (newsDB.updateArticle(id))
-                cout << "An article with ID: "<< id <<" updated successfully.\n";
+                cout << "An article with ID: " << id << " updated successfully.\n";
             else
-                cout << "An article with ID: "<< id <<" not found.\n";
+                cout << "An article with ID: " << id << " not found.\n";
             break;
         }
         case 7:
@@ -495,9 +474,9 @@ int main()
             cout << "Enter ID to delete: ";
             cin >> id;
             if (newsDB.deleteArticle(id))
-                cout << "An article with ID: " <<id<<" deleted successfully!";
+                cout << "An article with ID: " << id << " deleted successfully!";
             else
-                cout << "An article with ID: "<< id <<" not found.\n";
+                cout << "An article with ID: " << id << " not found.\n";
             break;
         }
         case 8:
